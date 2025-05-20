@@ -12,5 +12,3 @@ if __name__ == "__main__":
     app = Gui(pages=pages, css_file="assets/main.css")
 
     app.run(dark_mode=False, port=5757)
-
-#Test2
