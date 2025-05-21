@@ -1,5 +1,6 @@
 from backend.data_processing import filter_df_municipality, filter_decision, filter_education
 from frontend.charts import create_municipality_bar
+from frontend.maps import swe_map
 
 def filter_data(state):
 
@@ -26,3 +27,5 @@ def filter_mydata(state):
     state.beslut_df = filter_decision(
         state.gen_df
     )
+
+    state.swe_fig = swe_map(state.gen_df)
