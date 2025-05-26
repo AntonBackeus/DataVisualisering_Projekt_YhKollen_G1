@@ -1,6 +1,4 @@
 import plotly.express as px
-from utils.constants import DATA_DIRECTORY
-
 
 def create_municipality_bar(df, **options):
 

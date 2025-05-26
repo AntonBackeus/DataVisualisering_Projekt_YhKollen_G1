@@ -1,8 +1,8 @@
 import pandas as pd
-from utils.constants import DATA_DIRECTORY
+from utils.constants import PROGRAM_DIRECTORY
 
 df = pd.read_excel(
-    DATA_DIRECTORY / "resultat-ansokningsomgang-2024.xlsx",
+    PROGRAM_DIRECTORY / "resultat-ansokningsomgang-2024.xlsx",
     sheet_name="Tabell 3",
     skiprows=5,
 )
