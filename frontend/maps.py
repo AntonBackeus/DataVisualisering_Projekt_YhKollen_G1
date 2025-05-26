@@ -1,5 +1,4 @@
 import plotly.graph_objects as go
-import pandas as pd
 import numpy as np
 import duckdb
 import json
@@ -86,7 +85,6 @@ def swe_map(df):
         width=470,
         height=500,
     )
-    #fig.update_geos(fitbounds="locations", visible=False)
 
     fig.update_xaxes(fixedrange=True)
 

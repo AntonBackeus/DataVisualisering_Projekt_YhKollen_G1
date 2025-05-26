@@ -1,0 +1,27 @@
+Exempel/Maybes:
+
+Studenter som tar examen
+Genomsnittligt betyg
+Anmälningar/platser
+Konsulter/Fastanställda
+Studenters åsikt om kurser
+Praktikplatser med/utan hjälp av skolan
+Inkomst per klass, dvs pengar per elev och antal elever per klass
+Annonsinformation för hur folk valde att söka till utbildningen
+Närvaro/Betyg
+
+
+Domänåsikter:
+
+Inkomst, per elev, 4 terminer, max 35 elever
+Månadskoll på aktivitet
+6 månader efter examen koll om job, skala på om det är helt/delvis/inte alls inom branchen
+
+
+
+Nya program:
+Antalet sökningar
+Behov från arbetslivet
+
+Teams
+Marknadsteam, Intagningsteam, Utbildningsleader/Utbildningschef, ??, Marknadsteam, Kommunicationsteam, Ekonomiansvarig

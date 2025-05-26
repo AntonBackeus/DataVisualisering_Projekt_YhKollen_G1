@@ -1,3 +1,5 @@
 from pathlib import Path
 
-DATA_DIRECTORY = Path(__file__).parents[1] / "data"
+PROGRAM_DIRECTORY = Path(__file__).parents[1] / "data/program"
+COURSE_DIRECTORY = Path(__file__).parents[1] / "data/course"
+GRANT_DIRECTORY = Path(__file__).parents[1] / "data/grant"
