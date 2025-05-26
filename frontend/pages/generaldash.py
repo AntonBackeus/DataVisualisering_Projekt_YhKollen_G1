@@ -1,13 +1,13 @@
 import taipy.gui.builder as tgb
 from backend.data_processing import filter_education, filter_decision, df
 from backend.updates import filter_mydata
-from backend.maps import swe_map
+from frontend.maps import swe_map
 
 gen_df = filter_education(df)
 
 beslut_df = filter_decision(gen_df)
 
-swe_data, swe_prop = swe_map()
+swe_fig = swe_map(gen_df)
 
 gen_educational_area = "Data/IT"
 geducational_area_title = gen_educational_area
@@ -39,7 +39,7 @@ with tgb.Page() as general_page:
 
         tgb.table("{beslut_df}")
 
-        tgb.chart("{swe_data}", properties="{swe_prop}")
+        tgb.chart(figure="{swe_fig}")
 
 
     
