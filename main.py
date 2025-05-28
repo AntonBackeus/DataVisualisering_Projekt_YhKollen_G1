@@ -6,7 +6,7 @@ from frontend.pages.sweden import sweden_page
 
 pages = {"home": home_page, "generelt": general_page, "Overview": sweden_page}
 
-
+## quick fix
 if __name__ == "__main__":
     app = Gui(pages=pages, css_file="assets/main.css")
 
