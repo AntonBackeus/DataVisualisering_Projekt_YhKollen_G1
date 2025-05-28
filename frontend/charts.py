@@ -1,14 +1,13 @@
 import plotly.express as px
 
-def create_municipality_bar(df, **options):
-
+def create_data_bar(df, area="Kommun", **options):
     df["Ansökta_label"] = df["Ansökta utbildningar"].apply(
         lambda row: " " * 2 + f"{row}" + " " * 2
     )
 
     fig = px.bar(
         df,
-        y="Kommun",
+        y=area,
         x="Ansökta utbildningar",
         text="Ansökta_label",
     )
@@ -20,7 +19,7 @@ def create_municipality_bar(df, **options):
             ticklabelposition="outside left",
             showline=True,
             linecolor="lightgray",
-            title=dict(text=f"<b>{options.get('ylabel')}</b>"),
+            title=dict(text=f"<b>{area}</b>"),
         ),
         xaxis=dict(
             linecolor="lightgray",
