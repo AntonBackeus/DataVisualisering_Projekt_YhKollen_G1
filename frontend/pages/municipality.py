@@ -1,30 +1,29 @@
 import taipy.gui.builder as tgb
 from frontend.charts import create_data_bar
-from backend.data_processing import filter_df_bar, df_merged, df
-from backend.updates import filter_swedata
+from frontend.maps import swe_map
+from backend.data_processing import filter_df_bar, filter_education, df_merged
+from backend.updates import filter_mundata
 
 #Filter constants
-swe_educational_area = "Data/IT"
-field_type = "Kommun"
-swe_years = [2020,2024]
+mun_educational_area = "Data/IT"
+mun_years = [2020,2024]
 
-#Creating a bar chart able to be filtered
-bar_amount = 20
-df_bar_chart = filter_df_bar(df_merged)
-swe_bar_chart = create_data_bar(
-    df_bar_chart.head(bar_amount), area=field_type, xlabel="# ANSÖKTA UTBILDNINGAR"
-)
 
-#To be changed to line chart creation
-test_municipality = filter_df_bar(df)
-test_chart = create_data_bar(
-    test_municipality, area=field_type, xlabel="# ANSÖKTA UTBILDNINGAR"
+#Creating a bar chart for municipalities
+municipality_amount = 10
+df_municipality = filter_df_bar(df_merged)
+municipality_chart = create_data_bar(
+    df_municipality.head(municipality_amount), area="Kommun", xlabel="# ANSÖKTA UTBILDNINGAR"
 )
 
 #Statistic data values
 Data_value = "Dummy data"
 
-with tgb.Page() as sweden_page:
+#Creating a swedish map showing data about the areas
+mun_map_df = filter_education(df_merged)
+mun_fig = swe_map(mun_map_df)
+
+with tgb.Page() as municipality_page:
     #Background
     with tgb.part(class_name="container card stack-large"):
         tgb.navbar()
@@ -32,58 +31,48 @@ with tgb.Page() as sweden_page:
         with tgb.part(class_name="card"):
             tgb.text("# Yh Kollen", mode="md")
             tgb.text(
-                "En dashboard för att visa statistik och information om ansökningsomgångar för kommuner",
+                "En dashboard för att visa statistik och information om ansökningsomgångar per kommun",
                 mode="md",
                 )
         #Filters
-        with tgb.layout(columns="1 1 1"):
+        with tgb.layout(columns="1 1"):
             #Education
             with tgb.part(class_name="card"):
                 tgb.text("Filtrera datan på utbildingsområde")
                 tgb.selector(
-                    value="{swe_educational_area}",
+                    value="{mun_educational_area}",
                     lov=df_merged["Utbildningsområde"].unique(),
                     dropdown=True,
-                    on_change=filter_swedata
-                )
-            #Area (Kommun/Län/Anordnare)
-            with tgb.part(class_name="card"):
-                tgb.text("Filtrera datan på område")
-                tgb.selector(
-                    value="{field_type}",
-                    lov=["Kommun", "Län", "Utbildningsanordnare administrativ enhet"],
-                    dropdown=True,
-                    on_change=filter_swedata
+                    on_change=filter_mundata
                 )
             #Time
             with tgb.part(class_name="card"):
                 tgb.text("Filtrera data på år.")
                 tgb.slider(
-                    value="{swe_years}",
+                    value="{mun_years}",
                     min=2020,
                     max=2024,
                     continuous=False,
-                    on_change=filter_swedata
+                    on_change=filter_mundata
                 )
-                tgb.text("Filtering från {swe_years[0]} till {swe_years[1]}")
-        
-        #Figures
+                tgb.text("Filtering från {mun_years[0]} till {mun_years[1]}")
+        #Charts
         with tgb.layout(columns="1 1"):
-            #Filterable bar chart
+            #Municipality bar chart
             with tgb.part(class_name="card"):
-                tgb.text("Antal.")
+                tgb.text("Mängd kommuner.")
                 tgb.slider(
-                    value="{bar_amount}",
+                    value="{municipality_amount}",
                     min=5,
-                    max=len(df_bar_chart),
+                    max=len(df_municipality),
                     continuous=False,
-                    on_change=filter_swedata
+                    on_change=filter_mundata
                 )
-                tgb.chart(figure="{swe_bar_chart}")
-            #To be changed into a line chart
+                tgb.chart(figure="{municipality_chart}")
+            #Map
             with tgb.part(class_name="card"):
-                tgb.chart(figure="{test_chart}")
-        
+                tgb.chart(figure="{mun_fig}")
+
         #Statistic data
         with tgb.layout(columns="1 1 1"):
             with tgb.part(class_name="card"):
