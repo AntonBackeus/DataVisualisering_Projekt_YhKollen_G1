@@ -18,7 +18,7 @@ for value in PROGRAM_NAMES.values():
 
 df_merged = pd.concat(df_list, sort=False, ignore_index=True)
 
-def filter_df_municipality(df, educational_area="Data/IT", area="Kommun"):
+def filter_df_bar(df, educational_area="Data/IT", area="Kommun"):
     return (
         df.query("Utbildningsområde == @educational_area")[area]
         .value_counts()

@@ -1,6 +1,7 @@
 import plotly.express as px
 
-def create_data_bar(df, area="Kommun", **options):
+def create_data_bar(df_bar, area="Kommun", **options):
+    df = df_bar.copy()
     df["Ansökta_label"] = df["Ansökta utbildningar"].apply(
         lambda row: " " * 2 + f"{row}" + " " * 2
     )
