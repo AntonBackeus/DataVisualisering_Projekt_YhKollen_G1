@@ -17,7 +17,15 @@ municipality_chart = create_data_bar(
 )
 
 #Statistic data values
-Data_value = "Dummy data"
+mun_kommun = 'Stockholm'
+df_mun = df_merged.query('Kommun == @mun_kommun and Utbildningsområde == @mun_educational_area')
+Mun_value1 = int(df_mun['Sökta utbildningsomgångar'].sum())
+Mun_value2 = int(df_mun['Beviljade utbildningsomgångar'].sum())
+Mun_value3 = df_mun.query("Beslut == 'Ej beviljad'").shape[0]
+Mun_value4 = df_mun.query("Beslut == 'Beviljad'").shape[0]
+Mun_value5 = df_mun.query("`Studietakt %` == 100").shape[0]
+Mun_value6 = df_mun.shape[0]
+Mun_value5 = str(round((Mun_value5 / Mun_value6) * 100, 2)) + "%"
 
 #Creating a swedish map showing data about the areas
 mun_map_df = filter_education(df_merged)
@@ -74,23 +82,31 @@ with tgb.Page() as municipality_page:
                 tgb.chart(figure="{mun_fig}")
 
         #Statistic data
+        with tgb.part(class_name="card"):
+            tgb.text("Välj en kommun")
+            tgb.selector(
+                value="{mun_kommun}",
+                lov=df_merged['Kommun'].unique(),
+                dropdown=True,
+                on_change=filter_mundata
+            )
         with tgb.layout(columns="1 1 1"):
             with tgb.part(class_name="card"):
-                tgb.text("{Data_value}")
-                tgb.text("Data_description")
+                tgb.text("{Mun_value1}")
+                tgb.text("Antalet sökta utbildningsomgångar")
             with tgb.part(class_name="card"):
-                tgb.text("{Data_value}")
-                tgb.text("Data_description")
+                tgb.text("{Mun_value2}")
+                tgb.text("Antalet beviljade utbildningsomgångar")
             with tgb.part(class_name="card"):
-                tgb.text("{Data_value}")
-                tgb.text("Data_description")
+                tgb.text("{Mun_value3}")
+                tgb.text("Antalet nekade utbildningar")
         with tgb.layout(columns="1 1 1"):
             with tgb.part(class_name="card"):
-                tgb.text("{Data_value}")
-                tgb.text("Data_description")
+                tgb.text("{Mun_value4}")
+                tgb.text("Antalet godkända utbildningar")
             with tgb.part(class_name="card"):
-                tgb.text("{Data_value}")
-                tgb.text("Data_description")
+                tgb.text("{Mun_value5}")
+                tgb.text("Procenten av sökta utbildningar på heltakt")
             with tgb.part(class_name="card"):
-                tgb.text("{Data_value}")
-                tgb.text("Data_description")
+                tgb.text("{Mun_value6}")
+                tgb.text("Antalet sökta utbildningar")
