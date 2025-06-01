@@ -6,9 +6,9 @@ from frontend.maps import swe_map
 
 def filter_swedata(state):
 
-    df_bar_chart1 = filter_year(df_merged, state.swe_years[0], state.swe_years[1])
+    df_time = filter_year(df_merged, state.swe_years[0], state.swe_years[1])
     df_bar_chart = filter_df_bar(
-        df_bar_chart1, educational_area=state.swe_educational_area, area=state.field_type
+        df_time, educational_area=state.swe_educational_area, area=state.field_type
     )
 
     state.swe_bar_chart = create_data_bar(
@@ -31,6 +31,15 @@ def filter_swedata(state):
             y_title='Beviljade studentplatser',
             filter_=state.line_select
             )
+    swe_educational_area = state.swe_educational_area
+        
+    state.Data_value1 = int(df_time.query('Utbildningsområde == @swe_educational_area')['Sökta utbildningsomgångar'].sum())
+    state.Data_value2 = int(df_time.query('Utbildningsområde == @swe_educational_area')['Beviljade utbildningsomgångar'].sum())
+    state.Data_value3 = df_time.query("Beslut == 'Ej beviljad' and Utbildningsområde == @swe_educational_area").shape[0]
+    state.Data_value4 = df_time.query("Beslut == 'Beviljad' and Utbildningsområde == @swe_educational_area").shape[0]
+    tempData_value5 = df_time.query("`Studietakt %` == 100 and Utbildningsområde == @swe_educational_area").shape[0]
+    state.Data_value6 = df_time.shape[0]
+    state.Data_value5 = str(round((tempData_value5 / state.Data_value6) * 100, 2)) + "%"
 
 def filter_mundata(state):
     df_municipality1 = filter_year(df_merged, state.mun_years[0], state.mun_years[1])
