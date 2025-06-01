@@ -1,12 +1,13 @@
 import taipy.gui.builder as tgb
-from frontend.charts import create_data_bar
-from backend.data_processing import filter_df_bar, df_merged, df
+from frontend.charts import create_data_bar, create_line_dia
+from backend.data_processing import filter_df_bar, df_merged, df_sum
 from backend.updates import filter_swedata
 
 #Filter constants
 swe_educational_area = "Data/IT"
 field_type = "Kommun"
 swe_years = [2020,2024]
+line_select = 'Sökta platser totalt'
 
 #Creating a bar chart able to be filtered
 bar_amount = 20
@@ -15,11 +16,13 @@ swe_bar_chart = create_data_bar(
     df_bar_chart.head(bar_amount), area=field_type, xlabel="# ANSÖKTA UTBILDNINGAR"
 )
 
-#To be changed to line chart creation
-test_municipality = filter_df_bar(df)
-test_chart = create_data_bar(
-    test_municipality, area=field_type, xlabel="# ANSÖKTA UTBILDNINGAR"
-)
+#Creating a line chart able to be filtered
+swe_line = create_line_dia(
+            df_sum,
+            title='Antalet sökta platser över åren',
+            x_title='År',
+            y_title='Sökta studentplatser',
+            filter_=line_select)
 
 #Statistic data values
 Data_value = "Dummy data"
@@ -82,7 +85,13 @@ with tgb.Page() as sweden_page:
                 tgb.chart(figure="{swe_bar_chart}")
             #To be changed into a line chart
             with tgb.part(class_name="card"):
-                tgb.chart(figure="{test_chart}")
+                tgb.text("Filtrera datan på område")
+                tgb.selector(
+                    value="{line_select}",
+                    lov=['Sökta platser totalt', 'Beviljade platser totalt'],
+                    dropdown=True,
+                    on_change=filter_swedata)
+                tgb.chart(figure="{swe_line}")
         
         #Statistic data
         with tgb.layout(columns="1 1 1"):
