@@ -28,6 +28,9 @@ def create_data_bar(df_bar, area="Kommun", **options):
             title=f"<b>{options.get('xlabel')}</b>",
         ),
     )
+    
+    max_val = df['Ansökta utbildningar'].max()
+    fig.update_xaxes(range=[0, max_val * 1.2])
 
     fig.update_traces(
         textposition="outside",
