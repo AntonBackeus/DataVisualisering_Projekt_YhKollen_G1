@@ -8,7 +8,7 @@ bus_educational_area = "Data/IT"
 bus_years = [2020,2024]
 
 
-#Creating a bar chart for municipalities
+#Creating a bar chart for businesses
 business_amount = 20
 df_business = filter_df_bar(df_merged, educational_area=bus_educational_area, area="Utbildningsanordnare administrativ enhet")
 business_chart = create_data_bar(
@@ -17,7 +17,15 @@ business_chart = create_data_bar(
 max_business = len(df_business)
 
 #Statistic data values
-Data_value = "Dummy data"
+bus_anordnare = "JENSEN Education School AB"
+df_bus = df_merged.query('`Utbildningsanordnare administrativ enhet` == @bus_anordnare and Utbildningsområde == @bus_educational_area')
+bus_value1 = int(df_bus['Sökta utbildningsomgångar'].sum())
+bus_value2 = int(df_bus['Beviljade utbildningsomgångar'].sum())
+bus_value3 = df_bus.query("Beslut == 'Ej beviljad'").shape[0]
+bus_value4 = df_bus.query("Beslut == 'Beviljad'").shape[0]
+bus_value5 = df_bus.query("`Studietakt %` == 100").shape[0]
+bus_value6 = df_bus.shape[0]
+bus_value5 = str(round((bus_value5 / bus_value6) * 100, 2)) + "%"
 
 
 with tgb.Page() as business_page:
@@ -65,23 +73,31 @@ with tgb.Page() as business_page:
             )
             tgb.chart(figure="{business_chart}")
         #Statistic data
+        with tgb.part(class_name="card"):
+            tgb.text("Välj en kommun")
+            tgb.selector(
+                value="{bus_anordnare}",
+                lov=df_merged['Utbildningsanordnare administrativ enhet'].unique(),
+                dropdown=True,
+                on_change=filter_busdata
+            )
         with tgb.layout(columns="1 1 1"):
             with tgb.part(class_name="card"):
-                tgb.text("{Data_value}")
-                tgb.text("Data_description")
+                tgb.text("{bus_value1}")
+                tgb.text("Antalet sökta utbildningsomgångar")
             with tgb.part(class_name="card"):
-                tgb.text("{Data_value}")
-                tgb.text("Data_description")
+                tgb.text("{bus_value2}")
+                tgb.text("Antalet beviljade utbildningsomgångar")
             with tgb.part(class_name="card"):
-                tgb.text("{Data_value}")
-                tgb.text("Data_description")
+                tgb.text("{bus_value3}")
+                tgb.text("Antalet nekade utbildningar")
         with tgb.layout(columns="1 1 1"):
             with tgb.part(class_name="card"):
-                tgb.text("{Data_value}")
-                tgb.text("Data_description")
+                tgb.text("{bus_value4}")
+                tgb.text("Antalet godkända utbildningar")
             with tgb.part(class_name="card"):
-                tgb.text("{Data_value}")
-                tgb.text("Data_description")
+                tgb.text("{bus_value5}")
+                tgb.text("Procenten av sökta utbildningar på heltakt")
             with tgb.part(class_name="card"):
-                tgb.text("{Data_value}")
-                tgb.text("Data_description")
+                tgb.text("{bus_value6}")
+                tgb.text("Antalet sökta utbildningar")

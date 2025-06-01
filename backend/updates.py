@@ -42,9 +42,9 @@ def filter_swedata(state):
     state.Data_value5 = str(round((tempData_value5 / state.Data_value6) * 100, 2)) + "%"
 
 def filter_mundata(state):
-    df_municipality1 = filter_year(df_merged, state.mun_years[0], state.mun_years[1])
+    df_time = filter_year(df_merged, state.mun_years[0], state.mun_years[1])
     df_municipality = filter_df_bar(
-        df_municipality1, educational_area=state.mun_educational_area, area="Kommun"
+        df_time, educational_area=state.mun_educational_area, area="Kommun"
     )
 
     state.municipality_chart = create_data_bar(
@@ -54,15 +54,25 @@ def filter_mundata(state):
     mun_map_df = filter_education(df_merged, educational_area=state.mun_educational_area)
 
     state.mun_fig = swe_map(mun_map_df)
+
+    mun_kommun = state.mun_kommun
+    mun_educational_area = state.mun_educational_area
+    df_mun = df_time.query('Kommun == @mun_kommun and Utbildningsområde == @mun_educational_area')
+    state.Mun_value1 = int(df_mun['Sökta utbildningsomgångar'].sum())
+    state.Mun_value2 = int(df_mun['Beviljade utbildningsomgångar'].sum())
+    state.Mun_value3 = df_mun.query("Beslut == 'Ej beviljad'").shape[0]
+    state.Mun_value4 = df_mun.query("Beslut == 'Beviljad'").shape[0]
+    tempMun_value5 = df_mun.query("`Studietakt %` == 100").shape[0]
+    state.Mun_value6 = df_mun.shape[0]
+    state.Mun_value5 = str(round((tempMun_value5 / state.Mun_value6) * 100, 2)) + "%"
     
 
 def filter_busdata(state):
-    df_business1 = filter_year(df_merged, state.bus_years[0], state.bus_years[1])
+    df_time = filter_year(df_merged, state.bus_years[0], state.bus_years[1])
 
     df_business = filter_df_bar(
-        df_business1, educational_area=state.bus_educational_area, area="Utbildningsanordnare administrativ enhet"
+        df_time, educational_area=state.bus_educational_area, area="Utbildningsanordnare administrativ enhet"
     )
-
 
     df_max = df_business[df_business["Ansökta utbildningar"] !=0]
 
@@ -75,3 +85,13 @@ def filter_busdata(state):
         df_business.head(state.business_amount), area="Utbildningsanordnare administrativ enhet", xlabel="# ANSÖKTA UTBILDNINGAR"
     )
     
+    anordnare = state.bus_anordnare
+    bus_educational_area = state.bus_educational_area
+    df_bus = df_time.query('`Utbildningsanordnare administrativ enhet` == @anordnare')
+    state.bus_value1 = int(df_bus.query('Utbildningsområde == @bus_educational_area')['Sökta utbildningsomgångar'].sum())
+    state.bus_value2 = int(df_bus.query('Utbildningsområde == @bus_educational_area')['Beviljade utbildningsomgångar'].sum())
+    state.bus_value3 = df_bus.query("Beslut == 'Ej beviljad' and Utbildningsområde == @bus_educational_area").shape[0]
+    state.bus_value4 = df_bus.query("Beslut == 'Beviljad' and Utbildningsområde == @bus_educational_area").shape[0]
+    tempbus_value5 = df_bus.query("`Studietakt %` == 100 and Utbildningsområde == @bus_educational_area").shape[0]
+    state.bus_value6 = df_bus.query('Utbildningsområde == @bus_educational_area').shape[0]
+    state.bus_value5 = str(round((tempbus_value5 / state.bus_value6) * 100, 2)) + "%"

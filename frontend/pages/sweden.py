@@ -30,7 +30,7 @@ Data_value2 = int(df_merged.query('Utbildningsområde == @swe_educational_area')
 Data_value3 = df_merged.query("Beslut == 'Ej beviljad' and Utbildningsområde == @swe_educational_area").shape[0]
 Data_value4 = df_merged.query("Beslut == 'Beviljad' and Utbildningsområde == @swe_educational_area").shape[0]
 Data_value5 = df_merged.query("`Studietakt %` == 100 and Utbildningsområde == @swe_educational_area").shape[0]
-Data_value6 = df_merged.shape[0]
+Data_value6 = df_merged.query("Utbildningsområde == @swe_educational_area").shape[0]
 Data_value5 = str(round((Data_value5 / Data_value6) * 100, 2)) + "%"
 
 with tgb.Page() as sweden_page:
