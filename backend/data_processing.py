@@ -38,3 +38,4 @@ def filter_decision(df):
         .reset_index()
         .rename({"count": "Ansökta utbildningar"}, axis=1)
     )
+
