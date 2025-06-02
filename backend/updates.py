@@ -9,6 +9,7 @@ def filter_swedata(state):
 
     df_course_sum = df_course[df_course['Utbildningsområde'] == state.swe_educational_area].groupby('År')[['Antal beviljade platser 1', 'Antal beviljade platser 2']].sum().reset_index()
     df_course_sum['Total_Beviljade_Platser'] = df_course_sum[['Antal beviljade platser 1', 'Antal beviljade platser 2']].sum(axis=1)
+    df_course_sum = filter_year(df_course_sum, state.swe_years[0], state.swe_years[1])
 
     educational_area = state.swe_educational_area
     df_sum = df_sum.query('Utbildningsområde == @educational_area')
@@ -41,7 +42,7 @@ def filter_swedata(state):
     
     state.swe_line_course = create_line_dia(
             df_course_sum,
-            title='Antalet sökta kursplatser över åren',
+            title='Antalet beviljade kursplatser över åren',
             x_title='År',
             y_title= 'Beviljade kursplatser',
             filter_= 'Total_Beviljade_Platser')

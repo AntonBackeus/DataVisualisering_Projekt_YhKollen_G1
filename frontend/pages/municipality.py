@@ -110,9 +110,3 @@ with tgb.Page() as municipality_page:
             with tgb.part(class_name="card"):
                 tgb.text("{Mun_value6}")
                 tgb.text("Antalet sökta utbildningar")
-
-    tgb.Html("""
-    <script>
-      setTimeout(() => location.reload(), 10000);
-    </script>
-    """)

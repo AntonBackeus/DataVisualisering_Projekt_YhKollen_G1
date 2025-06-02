@@ -35,7 +35,7 @@ swe_bar_chart = create_data_bar(
 #Creating a line chart able to be filtered
 swe_line_course = create_line_dia(
             df_course_sum,
-            title='Antalet sökta kursplatser över åren',
+            title='Antalet beviljade kursplatser över åren',
             x_title='År',
             y_title= 'Beviljade kursplatser',
             filter_= 'Total_Beviljade_Platser')
@@ -98,7 +98,7 @@ with tgb.Page() as sweden_page:
                 tgb.chart(figure="{swe_bar_chart}")
             #To be changed into a line chart
             with tgb.part(class_name="card"):
-                tgb.text("Filtrera datan på område")
+                tgb.text("Filtrera utbildningsdatan på område")
                 tgb.selector(
                     value="{line_select}",
                     lov=['Sökta platser totalt', 'Beviljade platser totalt'],
@@ -128,9 +128,3 @@ with tgb.Page() as sweden_page:
             with tgb.part(class_name="card"):
                 tgb.text("{Data_value6}")
                 tgb.text("Antalet sökta utbildningar")
-
-    tgb.Html("""
-    <script>
-      setTimeout(() => location.reload(), 10000);
-    </script>
-    """)
