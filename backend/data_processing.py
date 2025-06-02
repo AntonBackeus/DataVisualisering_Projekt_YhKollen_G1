@@ -45,6 +45,7 @@ for value in COURSE_NAMES["Resultat"].values():
     df_list5.append(temp_df5)
 df_course = pd.concat(df_list5, sort=False, ignore_index=True).drop(columns='Diarienummer')
 df_course["Beslut"] = df_course['Beslut'].fillna('Beviljad')
+df_course['Kommun'] = df_course['Kommun'].replace('Se "Lista flera kommuner"', 'Flera kommuner')
 
 #Summerar antalet beviljade platser per år för kurser inom 'Data/IT'
 df_course_sum = df_course[df_course['Utbildningsområde'] == 'Data/IT'].groupby('År')[['Antal beviljade platser 1', 'Antal beviljade platser 2']].sum().reset_index()

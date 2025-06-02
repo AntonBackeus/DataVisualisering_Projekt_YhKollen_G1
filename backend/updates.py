@@ -15,13 +15,20 @@ def filter_swedata(state):
     df_sum = df_sum.query('Utbildningsområde == @educational_area')
     df_sum = df_sum.groupby('År')[['Sökta platser totalt', 'Beviljade platser totalt']].sum().reset_index()
     df_time = filter_year(df_merged, state.swe_years[0], state.swe_years[1])
+    df_time_course = filter_year(df_course, state.swe_years[0], state.swe_years[1])
+
     df_bar_chart = filter_df_bar(
         df_time, educational_area=state.swe_educational_area, area=state.field_type
     )
-
     state.swe_bar_chart = create_data_bar(
         df_bar_chart.head(state.bar_amount), area=state.field_type, xlabel="# ANSÖKTA UTBILDNINGAR"
     )
+
+    df_bar_chart_course = filter_df_bar(df_time_course, educational_area=state.swe_educational_area, area='Kommun')
+    state.swe_bar_chart_course = create_data_bar(
+        df_bar_chart_course.head(state.bar_amount), area='Kommun', xlabel="# ANSÖKTA KURSER"
+    )
+
     df_line = filter_year(df_sum, state.swe_years[0], state.swe_years[1])
     if state.line_select == 'Sökta platser totalt':
         state.swe_line = create_line_dia(
@@ -93,6 +100,7 @@ def filter_busdata(state):
     df_sum = df_sum.query('Utbildningsområde == @educational_area')
     df_sum = df_sum.groupby('År')[['Sökta platser totalt', 'Beviljade platser totalt']].sum().reset_index()
     df_time = filter_year(df_merged, state.bus_years[0], state.bus_years[1])
+    df_time_course = filter_year(df_course, state.bus_years[0], state.bus_years[1])
 
     df_business = filter_df_bar(
         df_time, educational_area=state.bus_educational_area, area="Utbildningsanordnare administrativ enhet"
@@ -108,6 +116,12 @@ def filter_busdata(state):
     state.business_chart = create_data_bar(
         df_business.head(state.business_amount), area="Utbildningsanordnare administrativ enhet", xlabel="# ANSÖKTA UTBILDNINGAR"
     )
+
+    df_bus_chart_course = filter_df_bar(df_time_course, educational_area=state.bus_educational_area, area='Anordnare')
+    state.bus_chart_course = create_data_bar(
+        df_bus_chart_course.head(state.business_amount), area='Anordnare', xlabel="# ANSÖKTA KURSER"
+    )
+
     
     anordnare = state.bus_anordnare
     bus_educational_area = state.bus_educational_area
