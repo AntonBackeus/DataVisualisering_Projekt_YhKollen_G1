@@ -21,8 +21,10 @@ COURSE_NAMES = {
         2025: "inkomna-ansokningar-2025-for-kurser.xlsx"
     },
     "Resultat" : {
-        2022: "resultat-2022-for-kurser-inom-yh.xlsx",
-        2023: "resultat-2023-for-kurser-inom-yh.xlsx",
-        2024: "resultat-2024-for-kurser-inom-yh.xlsx"
+        2020: "resultat_kurs_2020.xlsx",
+        2021: "resultat_kurs_2021.xlsx",
+        2022: "resultat_kurs_2022.xlsx",
+        2023: "resultat_kurs_2023.xlsx",
+        2024: "resultat_kurs_2024.xlsx"
     }
 }
