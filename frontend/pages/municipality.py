@@ -1,7 +1,6 @@
 import taipy.gui.builder as tgb
 from frontend.charts import create_data_bar
-from frontend.maps import swe_map
-from backend.data_processing import filter_df_bar, filter_education, df_merged
+from backend.data_processing import filter_df_bar, df_merged, df_course
 from backend.updates import filter_mundata
 
 #Filter constants
@@ -13,7 +12,7 @@ mun_years = [2020,2024]
 municipality_amount = 10
 df_municipality = filter_df_bar(df_merged)
 municipality_chart = create_data_bar(
-    df_municipality.head(municipality_amount), area="Kommun", xlabel="# ANSÖKTA UTBILDNINGAR"
+    df_municipality.head(municipality_amount), area="Kommun", xlabel="Ansökta Utbildningar", ylabel="Kommun"
 )
 
 #Statistic data values
@@ -24,12 +23,15 @@ Mun_value2 = int(df_mun['Beviljade utbildningsomgångar'].sum())
 Mun_value3 = df_mun.query("Beslut == 'Ej beviljad'").shape[0]
 Mun_value4 = df_mun.query("Beslut == 'Beviljad'").shape[0]
 Mun_value5 = df_mun.query("`Studietakt %` == 100").shape[0]
-Mun_value6 = df_mun.shape[0]
-Mun_value5 = str(round((Mun_value5 / Mun_value6) * 100, 2)) + "%"
+Mun_value6 = df_mun.query('Utbildningsområde == @mun_educational_area').shape[0]
+if Mun_value6 == 0: Mun_value5="0"
+else: Mun_value5 = str(round((Mun_value5 / Mun_value6) * 100, 2)) + "%"
 
-#Creating a swedish map showing data about the areas
-mun_map_df = filter_education(df_merged)
-mun_fig = swe_map(mun_map_df)
+#Creating a bar chart able to be filtered for courses
+df_bar_chart_course = filter_df_bar(df_course,educational_area=mun_educational_area, area='Kommun')
+mun_bar_chart_course = create_data_bar(
+    df_bar_chart_course.head(municipality_amount), area='Kommun', xlabel="Ansökta kurser", ylabel="Kommun"
+)
 
 with tgb.Page() as municipality_page:
     #Background
@@ -39,7 +41,7 @@ with tgb.Page() as municipality_page:
         with tgb.part(class_name="card"):
             tgb.text("# Yh Kollen", mode="md")
             tgb.text(
-                "En dashboard för att visa statistik och information om ansökningsomgångar per kommun",
+                "Denna sida visar statestik om ansökningarna fördelat över Sveriges kommuner",
                 mode="md",
                 )
         #Filters
@@ -65,21 +67,23 @@ with tgb.Page() as municipality_page:
                 )
                 tgb.text("Filtering från {mun_years[0]} till {mun_years[1]}")
         #Charts
+        with tgb.part(class_name="card"):
+            tgb.text("Mängd kommuner.")
+            tgb.slider(
+                value="{municipality_amount}",
+                min=5,
+                max=len(df_municipality),
+                continuous=False,
+                on_change=filter_mundata
+            )
+
         with tgb.layout(columns="1 1"):
             #Municipality bar chart
             with tgb.part(class_name="card"):
-                tgb.text("Mängd kommuner.")
-                tgb.slider(
-                    value="{municipality_amount}",
-                    min=5,
-                    max=len(df_municipality),
-                    continuous=False,
-                    on_change=filter_mundata
-                )
                 tgb.chart(figure="{municipality_chart}")
             #Map
             with tgb.part(class_name="card"):
-                tgb.chart(figure="{mun_fig}")
+                tgb.chart(figure="{mun_bar_chart_course}")
 
         #Statistic data
         with tgb.part(class_name="card"):

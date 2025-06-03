@@ -1,12 +1,11 @@
 from taipy.gui import Gui
-from frontend.pages.home import home_page
 from frontend.pages.business import business_page
 from frontend.pages.sweden import sweden_page
 from frontend.pages.municipality import municipality_page
 
 
 
-pages = {"home": home_page, "Overview": sweden_page, "Municipalities": municipality_page, "Business": business_page}
+pages = {"Översikt": sweden_page, "Kommuner": municipality_page, "Yrkeshögskolor": business_page}
 
 
 if __name__ == "__main__":

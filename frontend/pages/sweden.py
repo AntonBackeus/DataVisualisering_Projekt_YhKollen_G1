@@ -1,6 +1,7 @@
 import taipy.gui.builder as tgb
 from frontend.charts import create_data_bar, create_line_dia
-from backend.data_processing import filter_df_bar, df_merged, df_sum, df_course, df_course_sum
+from frontend.maps import swe_map
+from backend.data_processing import filter_df_bar, filter_education, df_merged, df_sum, df_course, df_course_sum
 from backend.updates import filter_swedata
 
 #Filter constants
@@ -13,7 +14,7 @@ line_select = 'Sökta platser totalt'
 bar_amount = 10
 df_bar_chart = filter_df_bar(df_merged, educational_area=swe_educational_area, area=field_type)
 swe_bar_chart = create_data_bar(
-    df_bar_chart.head(bar_amount), area=field_type, xlabel="# ANSÖKTA UTBILDNINGAR"
+    df_bar_chart.head(bar_amount), area=field_type, xlabel="Antal ansökta utbildningar", ylabel='Län'
 )
 
 #Creating a line chart able to be filtered for programs
@@ -25,11 +26,9 @@ swe_line = create_line_dia(
             filter_=line_select)
 
 
-#Creating a bar chart able to be filtered for courses
-df_bar_chart_course = filter_df_bar(df_course,educational_area=swe_educational_area, area='Kommun')
-swe_bar_chart_course = create_data_bar(
-    df_bar_chart_course.head(bar_amount), area='Kommun', xlabel="# ANSÖKTA KURSER"
-)
+#Creating a swedish map showing data about the areas
+swe_map_df = filter_education(df_merged)
+swe_fig = swe_map(swe_map_df)
 
 #Creating a line chart able to be filtered for courses
 swe_line_course = create_line_dia(
@@ -46,7 +45,8 @@ Data_value3 = df_merged.query("Beslut == 'Ej beviljad' and Utbildningsområde ==
 Data_value4 = df_merged.query("Beslut == 'Beviljad' and Utbildningsområde == @swe_educational_area").shape[0]
 Data_value5 = df_merged.query("`Studietakt %` == 100 and Utbildningsområde == @swe_educational_area").shape[0]
 Data_value6 = df_merged.query("Utbildningsområde == @swe_educational_area").shape[0]
-Data_value5 = str(round((Data_value5 / Data_value6) * 100, 2)) + "%"
+if Data_value6 == 0: Data_value5="0"
+else: Data_value5 = str(round((Data_value5 / Data_value6) * 100, 2)) + "%"
 
 with tgb.Page() as sweden_page:
     #Background
@@ -56,9 +56,10 @@ with tgb.Page() as sweden_page:
         with tgb.part(class_name="card"):
             tgb.text("# Yh Kollen", mode="md")
             tgb.text(
-                "En dashboard för att visa statistik och information om ansökningsomgångar för kommuner",
+                "Se hur datan ser ut för yrkeshögskolor som söker nya utbildningar eller kurser",
                 mode="md",
                 )
+            tgb.text("Översikt visar generell data inom Sverige")
         #Filters
         with tgb.layout(columns="1 1"):
             #Education
@@ -72,7 +73,7 @@ with tgb.Page() as sweden_page:
                 )
             #Time
             with tgb.part(class_name="card"):
-                tgb.text("Filtrera data på år.")
+                tgb.text("Filteras från åren {swe_years[0]} till {swe_years[1]}")
                 tgb.slider(
                     value="{swe_years}",
                     min=2020,
@@ -80,13 +81,13 @@ with tgb.Page() as sweden_page:
                     continuous=False,
                     on_change=filter_swedata
                 )
-                tgb.text("Filtering från {swe_years[0]} till {swe_years[1]}")
+
         
         #Figures
         with tgb.layout(columns="1 1"):
             #Filterable bar chart
             with tgb.part(class_name="card"):
-                tgb.text("Antal.")
+                tgb.text("Antal län visade: {bar_amount}")
                 tgb.slider(
                     value="{bar_amount}",
                     min=5,
@@ -95,7 +96,7 @@ with tgb.Page() as sweden_page:
                     on_change=filter_swedata
                 )
                 tgb.chart(figure="{swe_bar_chart}")
-                tgb.chart(figure="{swe_bar_chart_course}")
+                tgb.chart(figure="{swe_fig}")
             #To be changed into a line chart
             with tgb.part(class_name="card"):
                 tgb.text("Filtrera utbildningsdatan på område")

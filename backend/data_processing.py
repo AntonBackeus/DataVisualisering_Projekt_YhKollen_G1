@@ -12,6 +12,7 @@ for value in PROGRAM_NAMES.values():
     )
     df_list.append(temp_df)
 df_merged = pd.concat(df_list, sort=False, ignore_index=True)
+df_merged['Beslut'] = df_merged['Beslut'].replace('Avslag', 'Ej beviljad')
 
 #Skapar en temporär lista om platser från 2020-2021 för att kombineras senare
 df_list1= []
