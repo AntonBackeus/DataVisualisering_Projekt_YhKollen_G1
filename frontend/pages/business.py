@@ -12,7 +12,7 @@ bus_years = [2020,2024]
 business_amount = 20
 df_business = filter_df_bar(df_merged, educational_area=bus_educational_area, area="Utbildningsanordnare administrativ enhet")
 business_chart = create_data_bar(
-    df_business.head(business_amount), area="Utbildningsanordnare administrativ enhet", xlabel="# ANSÖKTA UTBILDNINGAR"
+    df_business.head(business_amount), area="Utbildningsanordnare administrativ enhet", xlabel="Antal ansökta utbildningar", ylabel="Anordnare"
 )
 max_business = len(df_business)
 
@@ -20,7 +20,7 @@ max_business = len(df_business)
 #Creating a bar chart for businesses for courses
 df_bus_chart_course = filter_df_bar(df_course, educational_area=bus_educational_area, area='Anordnare')
 bus_chart_course = create_data_bar(
-    df_bus_chart_course.head(business_amount), area='Anordnare', xlabel="# ANSÖKTA KURSER"
+    df_bus_chart_course.head(business_amount), area='Anordnare', xlabel="Antal ansökta kurser", ylabel="Anordnare"
 )
 
 #Statistic data values
@@ -32,7 +32,8 @@ bus_value3 = df_bus.query("Beslut == 'Ej beviljad'").shape[0]
 bus_value4 = df_bus.query("Beslut == 'Beviljad'").shape[0]
 bus_value5 = df_bus.query("`Studietakt %` == 100").shape[0]
 bus_value6 = df_bus.shape[0]
-bus_value5 = str(round((bus_value5 / bus_value6) * 100, 2)) + "%"
+if bus_value6 == 0: bus_value5="0"
+else: bus_value5 = str(round((bus_value5 / bus_value6) * 100, 2)) + "%"
 
 
 with tgb.Page() as business_page:
@@ -43,7 +44,7 @@ with tgb.Page() as business_page:
         with tgb.part(class_name="card"):
             tgb.text("# Yh Kollen", mode="md")
             tgb.text(
-                "En dashboard för att visa statistik och information om ansökningsomgångar per anordnare",
+                "Denna sida visar statestik om ansökningarna för anordnarna för utbildningarna/kurserna ",
                 mode="md",
                 )
         #Filters

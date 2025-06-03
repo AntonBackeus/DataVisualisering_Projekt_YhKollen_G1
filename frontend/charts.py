@@ -20,7 +20,7 @@ def create_data_bar(df_bar, area="Kommun", **options):
             ticklabelposition="outside left",
             showline=True,
             linecolor="lightgray",
-            title=dict(text=f"<b>{area}</b>"),
+            title=dict(text=f"<b>{options.get('ylabel')}</b>"),
         ),
         xaxis=dict(
             linecolor="lightgray",

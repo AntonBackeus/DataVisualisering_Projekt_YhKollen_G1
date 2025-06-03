@@ -15,19 +15,16 @@ def filter_swedata(state):
     df_sum = df_sum.query('Utbildningsområde == @educational_area')
     df_sum = df_sum.groupby('År')[['Sökta platser totalt', 'Beviljade platser totalt']].sum().reset_index()
     df_time = filter_year(df_merged, state.swe_years[0], state.swe_years[1])
-    df_time_course = filter_year(df_course, state.swe_years[0], state.swe_years[1])
 
     df_bar_chart = filter_df_bar(
         df_time, educational_area=state.swe_educational_area, area=state.field_type
     )
     state.swe_bar_chart = create_data_bar(
-        df_bar_chart.head(state.bar_amount), area=state.field_type, xlabel="# ANSÖKTA UTBILDNINGAR"
+        df_bar_chart.head(state.bar_amount), area=state.field_type, xlabel="Antal ansökta utbildningar", ylabel='Län'
     )
 
-    df_bar_chart_course = filter_df_bar(df_time_course, educational_area=state.swe_educational_area, area='Kommun')
-    state.swe_bar_chart_course = create_data_bar(
-        df_bar_chart_course.head(state.bar_amount), area='Kommun', xlabel="# ANSÖKTA KURSER"
-    )
+    swe_map_df = filter_education(df_time, educational_area=state.swe_educational_area)
+    state.swe_fig = swe_map(swe_map_df)
 
     df_line = filter_year(df_sum, state.swe_years[0], state.swe_years[1])
     if state.line_select == 'Sökta platser totalt':
@@ -62,7 +59,8 @@ def filter_swedata(state):
     state.Data_value4 = df_time.query("Beslut == 'Beviljad' and Utbildningsområde == @swe_educational_area").shape[0]
     tempData_value5 = df_time.query("`Studietakt %` == 100 and Utbildningsområde == @swe_educational_area").shape[0]
     state.Data_value6 = df_time.shape[0]
-    state.Data_value5 = str(round((tempData_value5 / state.Data_value6) * 100, 2)) + "%"
+    if state.Data_value6 == 0: state.Data_value5 = "0"
+    else: state.Data_value5 = str(round((tempData_value5 / state.Data_value6) * 100, 2)) + "%"
 
 def filter_mundata(state):
     df_sum = df_platser.copy()
@@ -75,12 +73,14 @@ def filter_mundata(state):
     )
 
     state.municipality_chart = create_data_bar(
-        df_municipality.head(state.municipality_amount), area="Kommun", xlabel="# ANSÖKTA UTBILDNINGAR"
+        df_municipality.head(state.municipality_amount), area="Kommun", xlabel="Ansökta Utbildningar", ylabel="Kommun"
     )
 
-    mun_map_df = filter_education(df_merged, educational_area=state.mun_educational_area)
-
-    state.mun_fig = swe_map(mun_map_df)
+    df_time_course = filter_year(df_course, state.mun_years[0], state.mun_years[1])
+    df_bar_chart_course = filter_df_bar(df_time_course, educational_area=state.mun_educational_area, area='Kommun')
+    state.mun_bar_chart_course = create_data_bar(
+        df_bar_chart_course.head(state.municipality_amount), area='Kommun', xlabel="Ansökta Kurser", ylabel="Kommun"
+    )
 
     mun_kommun = state.mun_kommun
     mun_educational_area = state.mun_educational_area
@@ -91,7 +91,8 @@ def filter_mundata(state):
     state.Mun_value4 = df_mun.query("Beslut == 'Beviljad'").shape[0]
     tempMun_value5 = df_mun.query("`Studietakt %` == 100").shape[0]
     state.Mun_value6 = df_mun.shape[0]
-    state.Mun_value5 = str(round((tempMun_value5 / state.Mun_value6) * 100, 2)) + "%"
+    if state.Mun_value6 == 0: state.Mun_value5 = "0"
+    else:state.Mun_value5 = str(round((tempMun_value5 / state.Mun_value6) * 100, 2)) + "%"
     
 
 def filter_busdata(state):
@@ -114,12 +115,12 @@ def filter_busdata(state):
         state.business_amount = state.max_business
 
     state.business_chart = create_data_bar(
-        df_business.head(state.business_amount), area="Utbildningsanordnare administrativ enhet", xlabel="# ANSÖKTA UTBILDNINGAR"
+        df_business.head(state.business_amount), area="Utbildningsanordnare administrativ enhet", xlabel="Antal ansökta utbildningar", ylabel="Anordnare"
     )
 
     df_bus_chart_course = filter_df_bar(df_time_course, educational_area=state.bus_educational_area, area='Anordnare')
     state.bus_chart_course = create_data_bar(
-        df_bus_chart_course.head(state.business_amount), area='Anordnare', xlabel="# ANSÖKTA KURSER"
+        df_bus_chart_course.head(state.business_amount), area='Anordnare', xlabel="Antal ansökta kurser", ylabel="Anordnare"
     )
 
     
@@ -132,4 +133,5 @@ def filter_busdata(state):
     state.bus_value4 = df_bus.query("Beslut == 'Beviljad' and Utbildningsområde == @bus_educational_area").shape[0]
     tempbus_value5 = df_bus.query("`Studietakt %` == 100 and Utbildningsområde == @bus_educational_area").shape[0]
     state.bus_value6 = df_bus.query('Utbildningsområde == @bus_educational_area').shape[0]
-    state.bus_value5 = str(round((tempbus_value5 / state.bus_value6) * 100, 2)) + "%"
+    if state.bus_value6 == 0: state.bus_value5 = "0"
+    else: state.bus_value5 = str(round((tempbus_value5 / state.bus_value6) * 100, 2)) + "%"

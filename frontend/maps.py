@@ -48,7 +48,7 @@ def swe_map(df):
             featureidkey="properties.ref:se:länskod",
             colorscale="Blues",
             customdata=df_regions["Beviljade"],
-            marker_opacity=0.9,
+            marker_opacity=1,
             marker_line_width=0.1,
             text=df_regions["Län"],
             hovertemplate="<b>%{text}</b><br>Beviljade utbildningar: %{customdata}<extra></extra>",
@@ -61,20 +61,20 @@ def swe_map(df):
             text=f"""
                     <b>Antal beviljade</b>
                     <br>utbildningar per län
-                    <br>inom YH i Sverige för 
-                    <br>omgång 2024. Ju mörkare 
-                    <br>blå färg, desto fler
-                    <br>beviljade utbildningar
+                    <br>inom YH i Sverige. 
+                    <br>Mörkare färg betyder 
+                    <br>mer beviljade
+                    <br>utbildningar
                     <br>
                     <br><b>{approved}</b> av totalt <b>{total_applications}</b>
                     <br>ansökningar har
-                    <br>godkänts, vilket innebär 
-                    <br><b>27%</b> beviljandegrad
+                    <br>godkänts
                     <br>
-                    <br><b>I ledningen är</b>
-                    <br>1. Stockholm, 
-                    <br>2. Västra Götaland
-                    <br>3. Skåne""",
+                    <br><b>OBS!
+                    <br>Län som saknas från
+                    <br>kartan har ingen
+                    <br>sökt utbildning för
+                    <br>utbildningsområdet!</b>""",
             x=0.06,
             y=0.75,
             font=dict(size=13),
