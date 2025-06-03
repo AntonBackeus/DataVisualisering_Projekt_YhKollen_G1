@@ -1,6 +1,6 @@
 import taipy.gui.builder as tgb
 from frontend.charts import create_data_bar, create_line_dia
-from backend.data_processing import filter_df_bar, df_merged, df_sum
+from backend.data_processing import filter_df_bar, df_merged, df_sum, df_course, df_course_sum
 from backend.updates import filter_swedata
 
 #Filter constants
@@ -9,20 +9,35 @@ field_type = "Län"
 swe_years = [2020,2024]
 line_select = 'Sökta platser totalt'
 
-#Creating a bar chart able to be filtered
+#Creating a bar chart able to be filtered for programs
 bar_amount = 10
-df_bar_chart = filter_df_bar(df_merged, area=field_type)
+df_bar_chart = filter_df_bar(df_merged, educational_area=swe_educational_area, area=field_type)
 swe_bar_chart = create_data_bar(
     df_bar_chart.head(bar_amount), area=field_type, xlabel="# ANSÖKTA UTBILDNINGAR"
 )
 
-#Creating a line chart able to be filtered
+#Creating a line chart able to be filtered for programs
 swe_line = create_line_dia(
             df_sum,
             title='Antalet sökta platser över åren',
             x_title='År',
-            y_title='Sökta studentplatser',
+            y_title='Sökta utbildningsplatser',
             filter_=line_select)
+
+
+#Creating a bar chart able to be filtered for courses
+df_bar_chart_course = filter_df_bar(df_course,educational_area=swe_educational_area, area='Kommun')
+swe_bar_chart_course = create_data_bar(
+    df_bar_chart_course.head(bar_amount), area='Kommun', xlabel="# ANSÖKTA KURSER"
+)
+
+#Creating a line chart able to be filtered for courses
+swe_line_course = create_line_dia(
+            df_course_sum,
+            title='Antalet beviljade kursplatser över åren',
+            x_title='År',
+            y_title= 'Beviljade kursplatser',
+            filter_= 'Total_Beviljade_Platser')
 
 #Statistic data values
 Data_value1 = int(df_merged.query('Utbildningsområde == @swe_educational_area')['Sökta utbildningsomgångar'].sum())
@@ -80,15 +95,17 @@ with tgb.Page() as sweden_page:
                     on_change=filter_swedata
                 )
                 tgb.chart(figure="{swe_bar_chart}")
+                tgb.chart(figure="{swe_bar_chart_course}")
             #To be changed into a line chart
             with tgb.part(class_name="card"):
-                tgb.text("Filtrera datan på område")
+                tgb.text("Filtrera utbildningsdatan på område")
                 tgb.selector(
                     value="{line_select}",
                     lov=['Sökta platser totalt', 'Beviljade platser totalt'],
                     dropdown=True,
                     on_change=filter_swedata)
                 tgb.chart(figure="{swe_line}")
+                tgb.chart(figure="{swe_line_course}")
         
         #Statistic data
         with tgb.layout(columns="1 1 1"):

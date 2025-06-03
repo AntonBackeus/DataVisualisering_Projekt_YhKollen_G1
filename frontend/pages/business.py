@@ -1,6 +1,6 @@
 import taipy.gui.builder as tgb
 from frontend.charts import create_data_bar
-from backend.data_processing import filter_df_bar, df_merged
+from backend.data_processing import filter_df_bar, df_merged, df_course
 from backend.updates import filter_busdata
 
 #Filter constants
@@ -8,13 +8,20 @@ bus_educational_area = "Data/IT"
 bus_years = [2020,2024]
 
 
-#Creating a bar chart for businesses
+#Creating a bar chart for businesses for programs
 business_amount = 20
 df_business = filter_df_bar(df_merged, educational_area=bus_educational_area, area="Utbildningsanordnare administrativ enhet")
 business_chart = create_data_bar(
     df_business.head(business_amount), area="Utbildningsanordnare administrativ enhet", xlabel="# ANSÖKTA UTBILDNINGAR"
 )
 max_business = len(df_business)
+
+
+#Creating a bar chart for businesses for courses
+df_bus_chart_course = filter_df_bar(df_course, educational_area=bus_educational_area, area='Anordnare')
+bus_chart_course = create_data_bar(
+    df_bus_chart_course.head(business_amount), area='Anordnare', xlabel="# ANSÖKTA KURSER"
+)
 
 #Statistic data values
 bus_anordnare = "JENSEN Education School AB"
@@ -72,6 +79,7 @@ with tgb.Page() as business_page:
                 on_change=filter_busdata
             )
             tgb.chart(figure="{business_chart}")
+            tgb.chart(figure="{bus_chart_course}")
         #Statistic data
         with tgb.part(class_name="card"):
             tgb.text("Välj en kommun")
