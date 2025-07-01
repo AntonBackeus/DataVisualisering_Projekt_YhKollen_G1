@@ -39,7 +39,7 @@ with tgb.Page() as municipality_page:
         tgb.navbar()
         #Title
         with tgb.part(class_name="card"):
-            tgb.text("# Yh Kollen", mode="md")
+            tgb.text("# Kommuner", mode="md")
             tgb.text(
                 "Denna sida visar statestik om ansökningarna fördelat över Sveriges kommuner",
                 mode="md",

@@ -3,6 +3,7 @@ from frontend.charts import create_data_bar
 from backend.data_processing import filter_df_bar, df_merged, df_course
 from backend.updates import filter_busdata
 
+
 #Filter constants
 bus_educational_area = "Data/IT"
 bus_years = [2020,2024]
@@ -40,6 +41,7 @@ with tgb.Page() as business_page:
     #Background
     with tgb.part(class_name="container card stack-large"):
         tgb.navbar()
+
         #Title
         with tgb.part(class_name="card"):
             tgb.text("# Yh Kollen", mode="md")

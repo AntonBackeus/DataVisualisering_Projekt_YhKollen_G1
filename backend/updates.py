@@ -2,6 +2,7 @@ from backend.data_processing import filter_df_bar, filter_education, filter_year
 from backend.data_processing import df_merged, df_platser, df_course
 from frontend.charts import create_data_bar, create_line_dia
 from frontend.maps import swe_map
+import plotly.express as px
 
 
 def filter_swedata(state):
@@ -135,3 +136,86 @@ def filter_busdata(state):
     state.bus_value6 = df_bus.query('Utbildningsområde == @bus_educational_area').shape[0]
     if state.bus_value6 == 0: state.bus_value5 = "0"
     else: state.bus_value5 = str(round((tempbus_value5 / state.bus_value6) * 100, 2)) + "%"
+
+def update_course_charts(state):
+    """Uppdaterar populära och mindre populära utbildningsdiagram baserat på valt state."""
+
+    kommun = getattr(state, "selected_kommun", None)
+    year = getattr(state, "selected_year", None)
+    top_n = int(getattr(state, "top_n_courses", 5) or 5)
+
+    def empty_chart(title="Ingen data"):
+        fig = px.pie(names=["Ingen data tillgänglig"], values=[1], title=title)
+        fig.update_traces(textinfo="none", showlegend=False)
+        fig.update_layout(margin=dict(t=30, b=10, l=10, r=10))
+        return fig
+
+    try:
+        year = int(year)
+    except (TypeError, ValueError):
+        empty = empty_chart("Årtal saknas eller ogiltigt")
+        state.popular_courses_chart = empty
+        state.unpopular_courses_chart = empty
+        return
+
+    if not kommun:
+        empty = empty_chart("Kommun saknas")
+        state.popular_courses_chart = empty
+        state.unpopular_courses_chart = empty
+        return
+
+    df_filtered = df_course[
+        (df_course["Kommun"] == kommun) &
+        (df_course["År"] == year)
+    ].copy()
+
+    if df_filtered.empty:
+        empty = empty_chart(f"Ingen data för {kommun} ({year})")
+        state.popular_courses_chart = empty
+        state.unpopular_courses_chart = empty
+        return
+
+    df_filtered["Totalt beviljade platser"] = (
+        df_filtered["Antal beviljade platser 1"].fillna(0) +
+        df_filtered["Antal beviljade platser 2"].fillna(0)
+    )
+
+    course_counts = (
+        df_filtered.groupby("Utbildningsnamn")["Totalt beviljade platser"]
+        .sum()
+        .reset_index()
+        .sort_values("Totalt beviljade platser", ascending=False)
+    )
+
+    popular = course_counts.head(top_n)
+    unpopular = course_counts[course_counts["Totalt beviljade platser"] > 0].tail(top_n)
+
+    def make_pie(data, title, colors):
+        if data.empty:
+            return empty_chart(title)
+        fig = px.pie(
+            data,
+            names="Utbildningsnamn",
+            values="Totalt beviljade platser",
+            title=title,
+            hole=0.4,
+            color_discrete_sequence=colors
+        )
+        fig.update_traces(
+            textposition="inside",
+            textinfo="percent+label",
+            hovertemplate="<b>%{label}</b><br>Platser: %{value}<br>Andel: %{percent}"
+        )
+        fig.update_layout(
+            margin=dict(t=40, b=20, l=20, r=20),
+            legend=dict(orientation="h", yanchor="bottom", y=-0.3),
+            title_font_size=16
+        )
+        return fig
+
+    state.popular_courses_chart = make_pie(
+        popular, f"Populära utbildningar i {kommun} ({year})", px.colors.sequential.Reds
+    )
+    state.unpopular_courses_chart = make_pie(
+        unpopular, f"Mindre populära utbildningar i {kommun} ({year})", px.colors.sequential.Blues
+    )
